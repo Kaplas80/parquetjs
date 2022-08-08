@@ -88,13 +88,8 @@ function decodeValues_INT96(cursor: Cursor, count: number) {
   for (let i = 0; i < count; ++i) {
     const low = INT53.readInt64LE(cursor.buffer, cursor.offset);
     const high = cursor.buffer.readUInt32LE(cursor.offset + 8);
-
-    if (high === 0xffffffff) {
-      values.push(~-low + 1); // truncate to 64 actual precision
-    } else {
-      values.push(low); // truncate to 64 actual precision
-    }
-
+    const epoch = (high - 2440588) * (86400 * 1000 * 1000 * 1000) + low
+    values.push(epoch)
     cursor.offset += 12;
   }
 
